@@ -1,0 +1,41 @@
+import os
+import subprocess
+import sys
+import venv
+import shutil
+
+def check_or_install_python():
+    if sys.version_info < (3, 9):
+        print("❌ Python 3.9+ required.")
+        sys.exit(1)
+    print(f"✅ Python version {sys.version} is OK.")
+
+def create_virtualenv(venv_dir="venv"):
+    if os.path.exists(venv_dir):
+        print(f"ℹ️ Virtual environment '{venv_dir}' already exists.")
+    else:
+        print(f"📦 Creating virtual environment in '{venv_dir}'...")
+        venv.create(venv_dir, with_pip=True)
+    return os.path.abspath(venv_dir)
+
+def install_dependencies(venv_dir="venv"):
+    pip_path = os.path.join(venv_dir, "Scripts" if os.name == "nt" else "bin", "pip")
+    requirements = ["fastapi", "uvicorn[standard]"]
+    print(f"📥 Installing dependencies: {', '.join(requirements)}")
+    subprocess.check_call([pip_path, "install"] + requirements)
+
+def main():
+    check_or_install_python()
+    venv_dir = create_virtualenv()
+    install_dependencies(venv_dir)
+    print("\n✅ Setup complete!")
+    print("▶ To activate venv:")
+    if os.name == "nt":
+        print(f"{venv_dir}\\Scripts\\activate")
+    else:
+        print(f"source {venv_dir}/bin/activate")
+    print("▶ To run backend:")
+    print("uvicorn backend.app.main:app --reload")
+
+if __name__ == "__main__":
+    main()
