@@ -1,0 +1,34 @@
+# File: .github/workflows/deploy.yml
+# Author: Professor Tucker & Tyfoon
+# Purpose: Automatically deploy the app to GitHub Pages whenever changes are pushed to the 'main' branch.
+
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # Trigger this action on push to 'main'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # Use Ubuntu runner for deployment
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Set up GitHub Pages
+      - name: Set up GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}  # GitHub's token for authorization
+          publish_dir: ./src  # Directory to deploy (update if using a different structure)
+
+      # Step 3: Commit and push to 'gh-pages' branch
+      - name: Deploy to GitHub Pages
+        run: |
+          git config --global user.name 'Professor Tucker'
+          git config --global user.email 'professor-tucker@example.com'
+          git commit -am "Deploy to GitHub Pages"
+          git push origin gh-pages
